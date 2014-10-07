@@ -377,7 +377,7 @@ FAQ.FAQTopicSearchBodyTemplate.cls
 
 修正内容
 
-%OnAterCreatePageにて全検索のチェックボックスのenclosingStypeにDisplay:noneを設定
+%OnAfterCreatePageにて全検索のチェックボックスのenclosingStypeにDisplay:noneを設定
 
 修正モジュール
 
