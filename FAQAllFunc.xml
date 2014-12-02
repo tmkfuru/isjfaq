@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2014.2 (Build 364U)" ts="2014-10-07 17:49:18">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.1 (Build 283U)" ts="2014-12-02 14:19:50">
 <Class name="FAQ.Error">
 <Super>%Persistent,%XML.Adaptor</Super>
 <TimeChanged>63413,70324.910682</TimeChanged>
@@ -1617,7 +1617,7 @@ UnitTest用クラス</Description>
 
 <Class name="KB.BitOperation">
 <IncludeCode>bitutil,%occInclude</IncludeCode>
-<TimeChanged>61047,42713</TimeChanged>
+<TimeChanged>63510,59530.49678</TimeChanged>
 <TimeCreated>60627,35144.721416</TimeCreated>
 
 <Method name="bitalloc">
@@ -1834,6 +1834,37 @@ error	quit 0
 			// 全体を加算後、マイナス分を2倍して引く
 			
 			Set sum = sum + (no * ($bitcount(select,1) - (2*$bitcount($bitlogic(select&minus),1))))  
+		  }
+	} 	
+ 
+   Quit sum
+]]></Implementation>
+</Method>
+
+<Method name="bitslicesum1">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>bsgn:%String</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+	Set bitno="",sum = 0
+	//bitnoは、2進の桁数を表す
+	For  {
+		  Set bitno=$Order(@bsgn@(bitno))
+		  Quit:(bitno="-")||(bitno="N")||(bitno="Z")||(bitno="")
+		  // Cache SQLが生成するbitsliceインデックスには、-,N,Zを表現するbit列を別に持つ
+		  
+		  Set no = 2 ** (bitno - 1)		//桁数は飛び飛びになりうるので、この様に計算する
+		  Set chunk=""
+		  For {
+			Set chunk=$Order(@bsgn@(bitno,chunk))
+			Quit:chunk=""
+			//set select = $bitlogic(@bsgn@(bitno,chunk)&@cdgn@(chunk))
+			set select = $get(@bsgn@(bitno,chunk))
+			set minus = $get(@bsgn@("-",chunk))
+			
+			// 全体を加算後、マイナス分を2倍して引く
+			
+			Set sum = sum + (no * (($bitcount(select,1) - (2*$bitcount($bitlogic(select&minus),1)))))  
 		  }
 	} 	
  
@@ -2259,7 +2290,7 @@ error	quit 0
 <Description>
 </Description>
 <IncludeCode>%occInclude</IncludeCode>
-<TimeChanged>63396,60507.214562</TimeChanged>
+<TimeChanged>63523,51138.948192</TimeChanged>
 <TimeCreated>60910,3246.496269</TimeCreated>
 
 <Method name="createAccentTable">
@@ -2322,6 +2353,7 @@ error	quit 0
 	do ##class(KB.Version).Init()
 	do ##class(KB.Platform).Init()
 	do ##class(KB.Category).Init()
+	do ##class(KB.Product).Init()
 	quit $$$OK
 ]]></Implementation>
 </Method>
@@ -2792,106 +2824,6 @@ the object's data has been successfully written to disk.
 ]]></Implementation>
 </Method>
 
-<Method name="RefCheckLink">
-<FormalSpec>pDebug:%Boolean</FormalSpec>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[
-	//相互リンクを行う
-	
-	//リンクをはずすためにtopic番号を削除した場合については考慮していない
-	
-	set tSC = $$$OK
-	
-	Try {
-		
-		  set tId = ..%Id()
-
-		  set tRefTopic = ..RefTopic
-		  				
-		  if pDebug Write "tRefTopic = "_tRefTopic,!
-		  
-		  If '$Length(tRefTopic) Quit
-		  
-		  for i =1:1:$Length(tRefTopic,",") {
-			  set tOtherId = $Piece(tRefTopic,",",i)
-			  set tOther = ##class(KB.Topic).%OpenId(tOtherId,,.tSC)
-			  if '$IsObject(tOther) $$$ThrowStatus(tSC)
-			  set tFindFlag = 0
-	          set tORefTopic = tOther.RefTopic
-			  for j = 1:1:$Length(tORefTopic,",") {
-			    if tId = $Piece(tORefTopic,",",j) set tFindFlag = 1
-			  }
-			  if pDebug Write "tFindFlag = "_tFindFlag,!
-			  if 'tFindFlag {
-				  set tOther.RefTopic = tOther.RefTopic_","_tId
-				  if $extract(tOther.RefTopic) = "," Set tOther.RefTopic = $Extract(tOther.RefTopic,2,*)
-				  $$$THROWONERROR(tSC,tOther.%Save())
-			  }
-		  }
-	}
-	Catch tE {
-		Set tSC = tE.AsStatus()
-		set tSC2 = ##class(FAQ.Error).StoreErrorInformation(tE)
-	}
-	Quit tSC
-]]></Implementation>
-</Method>
-
-<Method name="RemoveLink">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>pId:%Integer,pOldValue:%String,pNewValue:%String</FormalSpec>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[
-	//現在設定されているリンク番号を削除する場合、相手Topicからの参照をはずす必要がある
-		
-	set tSC = $$$OK	
-	
-	Try {
-		
-	    If (pOldValue = pNewValue) Quit
-	    
-	    If '$Length(pOldValue) Quit
-	    
-	    For i = 1:1:$Length(pOldValue,",") {
-		    Set tTopicId(i) = $Piece(pOldValue,",",i)
-		    Set tNoFindFlag = 1
-		    
-		    //古い値にはあるが新しい値に含まれないidを探す
-		    For j = 1:1:$Length(pNewValue,",") {
-			    Set tTopicId = $Piece(pNewValue,",",j)
-			    If (tTopicId(i) = tTopicId) Set tNoFindFlag = 0
-		    }
-		    
-		    If tNoFindFlag {
-			    Set tReferedTopic = ##class(KB.Topic).%OpenId(tTopicId(i))
-			    Set tRefTopic = tReferedTopic.RefTopic
-			    Set count = 0
-			    //新しい値からその削除されたidを取り除く
-			    For k = 1:1:$Length(tRefTopic,",") {
-				    Set tRefTopic2 = $Piece(tRefTopic,",",k)
-				    If (tRefTopic2 '= pId) {
-					    Set count = count + 1
-					    Set tNoRemovedRefTopic(count) = tRefTopic2
-				    }
-			    }
-			    
-			    For l = 1:1:count {
-				    Set tNewRefTopic = $Get(tNewRefTopic)_","_tNoRemovedRefTopic(l)
-			    }
-			    Set tReferedTopic.RefTopic = $extract($Get(tNewRefTopic),2,*)
-			    Set tSC = tReferedTopic.%Save()
-                Do tReferedTopic.%Reload()
-		    }
-	    }
-	}
-	Catch tE {
-		Set tSC = tE.AsStatus()
-		set tSC2 = ##class(FAQ.Error).StoreErrorInformation(tE)
-	}
-	Quit tSC
-]]></Implementation>
-</Method>
-
 <Storage name="Default">
 <Type>%Library.CacheStorage</Type>
 <DataLocation>^KB.TopicD</DataLocation>
@@ -3029,6 +2961,106 @@ the object's data has been successfully written to disk.
 </Value>
 </Data>
 </Storage>
+
+<Method name="RefCheckLink">
+<FormalSpec>pDebug:%Boolean</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	//相互リンクを行う
+	
+	//リンクをはずすためにtopic番号を削除した場合については考慮していない
+	
+	set tSC = $$$OK
+	
+	Try {
+		
+		  set tId = ..%Id()
+
+		  set tRefTopic = ..RefTopic
+		  				
+		  if pDebug Write "tRefTopic = "_tRefTopic,!
+		  
+		  If '$Length(tRefTopic) Quit
+		  
+		  for i =1:1:$Length(tRefTopic,",") {
+			  set tOtherId = $Piece(tRefTopic,",",i)
+			  set tOther = ##class(KB.Topic).%OpenId(tOtherId,,.tSC)
+			  if '$IsObject(tOther) $$$ThrowStatus(tSC)
+			  set tFindFlag = 0
+	          set tORefTopic = tOther.RefTopic
+			  for j = 1:1:$Length(tORefTopic,",") {
+			    if tId = $Piece(tORefTopic,",",j) set tFindFlag = 1
+			  }
+			  if pDebug Write "tFindFlag = "_tFindFlag,!
+			  if 'tFindFlag {
+				  set tOther.RefTopic = tOther.RefTopic_","_tId
+				  if $extract(tOther.RefTopic) = "," Set tOther.RefTopic = $Extract(tOther.RefTopic,2,*)
+				  $$$THROWONERROR(tSC,tOther.%Save())
+			  }
+		  }
+	}
+	Catch tE {
+		Set tSC = tE.AsStatus()
+		set tSC2 = ##class(FAQ.Error).StoreErrorInformation(tE)
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="RemoveLink">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pId:%Integer,pOldValue:%String,pNewValue:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	//現在設定されているリンク番号を削除する場合、相手Topicからの参照をはずす必要がある
+		
+	set tSC = $$$OK	
+	
+	Try {
+		
+	    If (pOldValue = pNewValue) Quit
+	    
+	    If '$Length(pOldValue) Quit
+	    
+	    For i = 1:1:$Length(pOldValue,",") {
+		    Set tTopicId(i) = $Piece(pOldValue,",",i)
+		    Set tNoFindFlag = 1
+		    
+		    //古い値にはあるが新しい値に含まれないidを探す
+		    For j = 1:1:$Length(pNewValue,",") {
+			    Set tTopicId = $Piece(pNewValue,",",j)
+			    If (tTopicId(i) = tTopicId) Set tNoFindFlag = 0
+		    }
+		    
+		    If tNoFindFlag {
+			    Set tReferedTopic = ##class(KB.Topic).%OpenId(tTopicId(i))
+			    Set tRefTopic = tReferedTopic.RefTopic
+			    Set count = 0
+			    //新しい値からその削除されたidを取り除く
+			    For k = 1:1:$Length(tRefTopic,",") {
+				    Set tRefTopic2 = $Piece(tRefTopic,",",k)
+				    If (tRefTopic2 '= pId) {
+					    Set count = count + 1
+					    Set tNoRemovedRefTopic(count) = tRefTopic2
+				    }
+			    }
+			    
+			    For l = 1:1:count {
+				    Set tNewRefTopic = $Get(tNewRefTopic)_","_tNoRemovedRefTopic(l)
+			    }
+			    Set tReferedTopic.RefTopic = $extract($Get(tNewRefTopic),2,*)
+			    Set tSC = tReferedTopic.%Save()
+                Do tReferedTopic.%Reload()
+		    }
+	    }
+	}
+	Catch tE {
+		Set tSC = tE.AsStatus()
+		set tSC2 = ##class(FAQ.Error).StoreErrorInformation(tE)
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
 </Class>
 
 

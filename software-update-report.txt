@@ -403,5 +403,24 @@ FAQ.FAQTopicSearchBodyTemplate.cls
 howto.csp
 
 
+------------------------------------------------------------------------------------
+修正ID		HS023
+
+日付		2014/12/02		
+
+内容
+
+初期データ生成処理に抜けあり
+
+修正内容
+
+masterSetup()に
+
+do ##class(KB.Product).Init()を追加
+
+修正モジュール
+
+KB.Setup.cls
+
 
 
