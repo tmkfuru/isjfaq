@@ -423,4 +423,29 @@ do ##class(KB.Product).Init()を追加
 KB.Setup.cls
 
 
+------------------------------------------------------------------------------------
+修正ID		HS024
+
+日付		2014/12/02		
+
+内容
+
+初期データ生成処理に抜けあり
+
+修正内容
+
+setConfigParams()に
+
+do ##class(KB.Config).setFileNameAttached()を追加
+
+Installerに
+
+##class(KB.Setup).setConfigParams()の呼出しを追加
+
+
+修正モジュール
+
+KB.Setup.cls
+FAQ.Installer.cls
+
 
