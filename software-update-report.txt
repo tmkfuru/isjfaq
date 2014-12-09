@@ -449,3 +449,23 @@ KB.Setup.cls
 FAQ.Installer.cls
 
 
+------------------------------------------------------------------------------------
+修正ID		HS025
+
+日付		2014/12/09		
+
+内容
+
+Typo
+
+
+修正内容
+
+##class(KB.Setup).setConfigParams()の呼出しを追加
+
+
+修正モジュール
+
+FAQ.Installer.cls
+
+

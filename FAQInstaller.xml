@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.1 (Build 283U)" ts="2014-12-02 18:15:40">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.1 (Build 283U)" ts="2014-12-09 18:20:09">
 <Class name="FAQ.Installer">
 <Description>
 %Installer Manifest FAQ.Installer</Description>
 <IncludeCode>%occInclude</IncludeCode>
-<TimeChanged>63523,62416.980934</TimeChanged>
+<TimeChanged>63524,43290.93438</TimeChanged>
 <TimeCreated>63393,40515.581067</TimeCreated>
 
 <XData name="FAQManifest">
@@ -47,7 +47,7 @@
 </Invoke>
 <Invoke Class="KB.Setup" Method="masterSetup" CheckStatus="0" Return="RetVal"> 
 </Invoke>
-<Invoke Class="KB.Setup" Method="setConigParams" CheckStatus="0" Return="RetVal"> 
+<Invoke Class="KB.Setup" Method="setConfigParams" CheckStatus="0" Return="RetVal"> 
 </Invoke>
 <If Condition='$L("${ResetTopicSubID}")>0'>
 <Invoke Class="KB.Topic" Method="ResetTopicSubID" CheckStatus="0" Return="RetVal"> 
