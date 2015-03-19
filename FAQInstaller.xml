@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.1 (Build 283U)" ts="2014-12-09 18:20:09">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2 (Build 553U)" ts="2015-03-19 12:02:11">
 <Class name="FAQ.Installer">
 <Description>
 %Installer Manifest FAQ.Installer</Description>
 <IncludeCode>%occInclude</IncludeCode>
-<TimeChanged>63524,43290.93438</TimeChanged>
+<TimeChanged>63608,59513.848106</TimeChanged>
 <TimeCreated>63393,40515.581067</TimeCreated>
 
 <XData name="FAQManifest">
@@ -36,6 +36,11 @@
 <If Condition='$L("${GlobalFileName}")>0'>
 <Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
     <Arg Value="${GlobalFileName}"/>
+</Invoke>
+</If>
+<If Condition='$L("${KatakanaWordsFileName}")>0'>
+<Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
+    <Arg Value="${KatakanaWordsFileName}"/>
 </Invoke>
 </If>
 <Invoke Class="KB.Text" Method="ExcludeCommonTerms" CheckStatus="0" Return="RetVal"> 
@@ -81,6 +86,8 @@
 	set vars("ClassFileName") = "" //プログラムの変更がない場合
 	//set vars("GlobalFileName") = "F:\test\faq\Topic_20140725.xml"
 	set vars("GlobalFileName") = ""  //データの変更がない場合
+	//set vars("KatakanaWordsFileName") = "F:\test\faq\KatakanaWords_20150225.xml"
+	set vars("KatakanaWordsFileName") = ""  //カタカナ語の登録に変更がない場合
 	set vars("ResetTopicSubID") = "" //TopicSubIDをリセットする場合。通常は必要ない
 
     // テスト環境
@@ -114,7 +121,7 @@
 <Method name="getVersion">
 <ClassMethod>1</ClassMethod>
 <ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit "1.0.002"
+<Implementation><![CDATA[	quit "1.0.003"
 ]]></Implementation>
 </Method>
 </Class>

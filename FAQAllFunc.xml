@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.1 (Build 283U)" ts="2014-12-02 17:26:05">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2 (Build 553U)" ts="2015-03-19 13:32:12">
 <Class name="FAQ.Error">
 <Super>%Persistent,%XML.Adaptor</Super>
 <TimeChanged>63413,70324.910682</TimeChanged>
@@ -1565,7 +1565,7 @@ UnitTest用クラス</Description>
 </Class>
 
 
-<Project name="FAQAllFunc" LastModified="2014-08-22 17:13:02.435974">
+<Project name="FAQAllFunc" LastModified="2015-03-19 11:57:11.848581">
   <Items>
     <ProjectItem name="FAQ.Error" type="CLS"></ProjectItem>
     <ProjectItem name="FAQ.FAQApp" type="CLS"></ProjectItem>
@@ -1611,6 +1611,7 @@ UnitTest用クラス</Description>
     <ProjectItem name="csp/user/style.css" type="CSP"></ProjectItem>
     <ProjectItem name="csp/user/styleedit.css" type="CSP"></ProjectItem>
     <ProjectItem name="csp/user/stylehowto.css" type="CSP"></ProjectItem>
+    <ProjectItem name="Test.Test1" type="CLS"></ProjectItem>
   </Items>
 </Project>
 
@@ -2451,7 +2452,7 @@ index, in addition to single words.  Consecutive words exclude noise words.
 ナレッジベースのトピック</Description>
 <IncludeCode>FAQ</IncludeCode>
 <Super>%Persistent,%XML.Adaptor</Super>
-<TimeChanged>63419,57037.074108</TimeChanged>
+<TimeChanged>63624,57876.474901</TimeChanged>
 <TimeCreated>59953,69195.756844</TimeCreated>
 <Inheritance>right</Inheritance>
 
@@ -3024,7 +3025,17 @@ the object's data has been successfully written to disk.
 	    If (pOldValue = pNewValue) Quit
 	    
 	    If '$Length(pOldValue) Quit
+	    	     
+	    For i = 1:1:$Length(pOldValue,",") {
+		    set id = $Piece(pOldValue,",",i)
+		    if '(id?.n) $$$ThrowStatus(0)
+	    }
 	    
+	    For i = 1:1:$Length(pNewValue,",") {
+		    set id = $Piece(pNewValue,",",i)
+		    if '(id?.n) $$$ThrowStatus(0)
+	    }
+
 	    For i = 1:1:$Length(pOldValue,",") {
 		    Set tTopicId(i) = $Piece(pOldValue,",",i)
 		    Set tNoFindFlag = 1
@@ -3319,7 +3330,7 @@ emailアドレス</Description>
 <Description>
 </Description>
 <IncludeCode>%occInclude</IncludeCode>
-<TimeChanged>63523,62490.551162</TimeChanged>
+<TimeChanged>63630,48716.605896</TimeChanged>
 <TimeCreated>60909,32153.415513</TimeCreated>
 
 <Method name="xmlImport">
@@ -3915,7 +3926,6 @@ xmlインポートおよびxmlエクスポートでは、TopicのFileLoc(FileStr
 	}
 }
 */
-
 ]]></Content>
 </UDLText>
 
@@ -3933,7 +3943,6 @@ ClassMethod ClearUsersVoice() As %Status
 	}
 }
 */
-
 ]]></Content>
 </UDLText>
 
@@ -3944,7 +3953,6 @@ ClassMethod ClearUsersVoice() As %Status
 UsersVoiceオブジェクトを作成し、セットする。
 トピックの更新後に必ず実行。
 */
-
 ]]></Content>
 </UDLText>
 
@@ -3981,7 +3989,42 @@ UsersVoiceオブジェクトを作成し、セットする。
 <Method name="ShowVersion">
 <ClassMethod>1</ClassMethod>
 <ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit "1.0.007"
+<Implementation><![CDATA[	quit "1.0.009"
+]]></Implementation>
+</Method>
+
+<Method name="FindKatakanaKeywords">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set counter = 0
+	kill ^katakanawords
+	for i=1:1:^KB.TopicD {
+		set topic=##class(KB.Topic).%OpenId(i)
+		
+		if $ISOBJECT(topic)'=1 continue
+		
+		Set title = topic.Title
+		Set wakatititle = ##class(Text.MecabJapanese2).SeparateWords(title)
+		Set pc = $Length(wakatititle," ")
+		For j=1:1:pc {
+			Set piece = $Piece(wakatititle," ",j)
+			If (($ascii($Extract(piece,1)) > 12449) && ($ascii($Extract(piece,1)) < 12541)) {
+				set ^katakanawords($increment(counter)) = piece
+			}
+		}
+
+		Set description = topic.Description
+		Set wakatidescription = ##class(Text.MecabJapanese2).SeparateWords(description)
+		Set pc = $Length(wakatidescription," ")
+		For j=1:1:pc {
+			Set piece = $Piece(wakatidescription," ",j)
+			If (($ascii($Extract(piece,1)) > 12449) && ($ascii($Extract(piece,1)) < 12541)) {
+				set ^katakanawords($increment(counter)) = piece
+			}
+		}
+	}
+	Quit $$$OK
 ]]></Implementation>
 </Method>
 </Class>
@@ -4103,6 +4146,41 @@ UsersVoiceオブジェクトを作成し、セットする。
 </Class>
 
 
+<Class name="Test.Test1">
+<Super>%Persistent</Super>
+<TimeChanged>63629,61414.160506</TimeChanged>
+<TimeCreated>63629,61235.925584</TimeCreated>
+
+<Property name="Order">
+<Type>%String</Type>
+</Property>
+
+<Property name="table">
+<Type>%String</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Test.Test1D</DataLocation>
+<DefaultData>Test1DefaultData</DefaultData>
+<IdLocation>^Test.Test1D</IdLocation>
+<IndexLocation>^Test.Test1I</IndexLocation>
+<StreamLocation>^Test.Test1S</StreamLocation>
+<Data name="Test1DefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Order</Value>
+</Value>
+<Value name="3">
+<Value>table</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
 <Class name="TestMe.test">
 <Description>
 Created using the page template: Default</Description>
@@ -4152,7 +4230,7 @@ Created using the page template: Default</Description>
 
 <Class name="Text.MecabJapanese2">
 <Super>%Text.Japanese</Super>
-<TimeChanged>63404,70828.062425</TimeChanged>
+<TimeChanged>63624,52087.768265</TimeChanged>
 <TimeCreated>62222,41849.078328</TimeCreated>
 
 <Parameter name="NOISEWORDS100">
@@ -4199,7 +4277,30 @@ Created using the page template: Default</Description>
 	}
 	
 	set libID = ^||mecab20140618("libID")
-	set funcID = ^||mecab20140618("funcID") 	
+	set funcID = ^||mecab20140618("funcID")
+	// ・は予めスペースに変換
+	set rawText = $Replace(rawText,"・"," ")
+	// カタカナは思ったように単語分解されないので登録したカタカナに関して予め分割しておく
+	If ..FindKatakanaWord(rawText,3) {
+	//3文字以上のカタカナ語が見つかった場合には、分割したほうが良いか確認する
+	  If $Length(rawText) < 17 {
+		//16文字以下の場合には、文字列を解析し、登録されたカタカナ語がマッチするか直接確認し、マッチした
+		//場合にはスペースで分割する
+		//検索キーワードの場合を想定
+		Set rawText = ..SpritKatakanaKeyWord(rawText,16)
+	  }
+	  Else {
+		//16文字を超える場合には、文字列を解析せずに登録されたカタカナ語の逐次変換を試みる
+		//インデックス生成の場合を想定
+	    set katakanaword = ""
+	    for {
+		  set katakanaword = $Order(^KatakanaWords(katakanaword))
+		  if katakanaword = "" quit
+		  set rawText = $Replace(rawText," "_katakanaword,katakanaword_" ")
+	    }
+	  }
+	}
+	set rawText = $Replace(rawText,"  "," ") 	
     set tResult=$ZF(-5,libID,funcID,$ZCVT(rawText,"O","UTF8"))
     set tResult=$ZCVT(tResult,"I","UTF8")
     
@@ -4257,6 +4358,78 @@ Created using the page template: Default</Description>
 	s maxW=$s(nTerms>300:100,1:nTerms-200) for w=1:1:maxW { do ..AddToDictionary($p(..#NOISEBIGRAMS300,",",w),0,0,"") }	
 
 	QUIT $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="FindKatakanaWord">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pString:%String,pMinLength:%Integer=4</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+
+	Set katakanaflag = 0
+    Set kanalength = 0
+    	
+	For i = 1:1:$Length(pString) {
+		Set Char = $Extract(pString,i)
+		If (($Ascii(Char) > 12449) && ($Ascii(Char) < 12541)) {
+			set kanaword = $Get(kanaword)_Char
+			set kanalength = kanalength + 1
+		}
+		Else {
+			If pMinLength >= kanalength {
+				Kill kanaword
+				Set kanalength = 0
+				Continue
+			}
+		}
+		If kanalength > pMinLength {
+			Set katakanaflag = 1 Quit
+		} 
+		
+	}
+	
+	Quit katakanaflag
+]]></Implementation>
+</Method>
+
+<Method name="SpritKatakanaKeyWord">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pString:%String,pMaxLength:%Integer=10</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+
+    If $length(pString) > pMaxLength Quit pString
+    
+    Set wordcount = 0
+    
+    For j = 1:1:$Length(pString) {	
+      kill kanaword
+	  For i = j:1:$Length(pString) {
+		  Set Char = $Extract(pString,i)
+		  If (($Ascii(Char) > 12449) && ($Ascii(Char) < 12541)) {
+			  set kanaword = $Get(kanaword)_Char
+			  If $Data(^KatakanaWords(kanaword)) {
+				  Set wordcount = wordcount + 1
+				  Set keyword(wordcount) = kanaword
+				  Kill kanaword
+			  }
+		  }
+		  Else {
+			  Kill kanaword
+			  Set kanalength = 0
+			  Continue
+		  }
+		
+	  }
+    }
+
+	For i = 1:1:wordcount {
+		Set pString = $Replace(pString,keyword(i)," "_keyword(i)_" ")
+	}	
+	Set pString = $Replace(pString,"   "," ")
+	Set pString = $Replace(pString,"  "," ")
+	Quit pString
 ]]></Implementation>
 </Method>
 </Class>
