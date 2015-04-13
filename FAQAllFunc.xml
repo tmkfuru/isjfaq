@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2 (Build 553U)" ts="2015-03-19 13:32:12">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2 (Build 599U)" ts="2015-04-13 15:11:42">
 <Class name="FAQ.Error">
 <Super>%Persistent,%XML.Adaptor</Super>
 <TimeChanged>63413,70324.910682</TimeChanged>
@@ -790,7 +790,7 @@ Created using the page template: タイトルページ</Description>
 <Abstract>1</Abstract>
 <IncludeCode>FAQ</IncludeCode>
 <Super>%ZEN.Component.page</Super>
-<TimeChanged>63467,63237.902083</TimeChanged>
+<TimeChanged>63637,57302.67426</TimeChanged>
 <TimeCreated>61636,51413.567991</TimeCreated>
 
 <Parameter name="APPLICATION">
@@ -1565,7 +1565,7 @@ UnitTest用クラス</Description>
 </Class>
 
 
-<Project name="FAQAllFunc" LastModified="2015-03-19 11:57:11.848581">
+<Project name="FAQAllFunc" LastModified="2015-03-19 11:57:11.846458">
   <Items>
     <ProjectItem name="FAQ.Error" type="CLS"></ProjectItem>
     <ProjectItem name="FAQ.FAQApp" type="CLS"></ProjectItem>
@@ -1593,6 +1593,7 @@ UnitTest用クラス</Description>
     <ProjectItem name="KB.UsersVoice" type="CLS"></ProjectItem>
     <ProjectItem name="KB.Utility" type="CLS"></ProjectItem>
     <ProjectItem name="KB.Version" type="CLS"></ProjectItem>
+    <ProjectItem name="Test.Test1" type="CLS"></ProjectItem>
     <ProjectItem name="TestMe.test" type="CLS"></ProjectItem>
     <ProjectItem name="Text.MecabJapanese2" type="CLS"></ProjectItem>
     <ProjectItem name="Utility.MAC" type="MAC"></ProjectItem>
@@ -1611,7 +1612,6 @@ UnitTest用クラス</Description>
     <ProjectItem name="csp/user/style.css" type="CSP"></ProjectItem>
     <ProjectItem name="csp/user/styleedit.css" type="CSP"></ProjectItem>
     <ProjectItem name="csp/user/stylehowto.css" type="CSP"></ProjectItem>
-    <ProjectItem name="Test.Test1" type="CLS"></ProjectItem>
   </Items>
 </Project>
 
@@ -4230,7 +4230,7 @@ Created using the page template: Default</Description>
 
 <Class name="Text.MecabJapanese2">
 <Super>%Text.Japanese</Super>
-<TimeChanged>63624,52087.768265</TimeChanged>
+<TimeChanged>63655,53788.740486</TimeChanged>
 <TimeCreated>62222,41849.078328</TimeCreated>
 
 <Parameter name="NOISEWORDS100">
@@ -4296,7 +4296,7 @@ Created using the page template: Default</Description>
 	    for {
 		  set katakanaword = $Order(^KatakanaWords(katakanaword))
 		  if katakanaword = "" quit
-		  set rawText = $Replace(rawText," "_katakanaword,katakanaword_" ")
+		  set rawText = $Replace(rawText,katakanaword," "_katakanaword_" ")
 	    }
 	  }
 	}
