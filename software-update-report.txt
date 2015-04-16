@@ -518,7 +518,7 @@ KB.Utility
 
 内容
 
-HS026の変更に伴い、インストラーの変更が必要になった
+HS026の変更に伴い、インストーラーの変更が必要になった
 
 
 修正内容
@@ -590,5 +590,29 @@ HS029のバグ修正
 
 Text.MecabaJapanese2.cls
 
+
+------------------------------------------------------------------------------------
+修正ID		HS032
+
+日付		2015/04/14		
+
+内容
+
+UsersVoiceの本番環境setup(CreateUsersVoice)にバグがあり、UsersVoiceとTopic情報に不整合が発生した。
+
+Install時に行うのではなく、参照時に存在しない場合にUsersVoiceを作成するように変更する。
+
+
+修正内容
+
+InstallerからCreateUsersVoiceの呼出し処理を削除
+UsersVoiceの更新時にUsersVoiceが存在しなければ、新規インスタンスを生成する。
+
+
+修正モジュール
+
+FAQ.Installer.cls
+result.CSP
+KB.Utility.cls（使わないので修正の必要がないが、CreateUsersVoiceのバグもついでに修正）
 
 

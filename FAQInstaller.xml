@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2 (Build 553U)" ts="2015-03-19 12:02:11">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2 (Build 599U)" ts="2015-04-16 18:09:15">
 <Class name="FAQ.Installer">
 <Description>
 %Installer Manifest FAQ.Installer</Description>
 <IncludeCode>%occInclude</IncludeCode>
-<TimeChanged>63608,59513.848106</TimeChanged>
+<TimeChanged>63658,65318.696235</TimeChanged>
 <TimeCreated>63393,40515.581067</TimeCreated>
 
 <XData name="FAQManifest">
@@ -47,8 +47,6 @@
     <Arg Value="100"/>
 </Invoke>
 <Invoke Class="KB.Topic" Method="%BuildIndices" CheckStatus="0" Return="RetVal"> 
-</Invoke>
-<Invoke Class="KB.Utility" Method="CreateUsersVoice" CheckStatus="0" Return="RetVal"> 
 </Invoke>
 <Invoke Class="KB.Setup" Method="masterSetup" CheckStatus="0" Return="RetVal"> 
 </Invoke>
@@ -121,7 +119,7 @@
 <Method name="getVersion">
 <ClassMethod>1</ClassMethod>
 <ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit "1.0.003"
+<Implementation><![CDATA[	quit "1.0.004"
 ]]></Implementation>
 </Method>
 </Class>

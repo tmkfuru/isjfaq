@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2 (Build 599U)" ts="2015-04-13 15:11:42">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2 (Build 599U)" ts="2015-04-16 18:09:35">
 <Class name="FAQ.Error">
 <Super>%Persistent,%XML.Adaptor</Super>
 <TimeChanged>63413,70324.910682</TimeChanged>
@@ -3330,7 +3330,7 @@ emailアドレス</Description>
 <Description>
 </Description>
 <IncludeCode>%occInclude</IncludeCode>
-<TimeChanged>63630,48716.605896</TimeChanged>
+<TimeChanged>63658,65337.639933</TimeChanged>
 <TimeCreated>60909,32153.415513</TimeCreated>
 
 <Method name="xmlImport">
@@ -3961,7 +3961,7 @@ UsersVoiceオブジェクトを作成し、セットする。
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	set tSC = $$$OK
-	for i=$increment(^KB.UsersVoiceD):1:^KB.TopicD {
+	for i=^KB.UsersVoiceD+1:1:^KB.TopicD {
 		w "check:",i,"-"
 		set uv=##class(UsersVoice).%New()
 		set tp=##class(KB.Topic).%OpenId(i)
@@ -3989,7 +3989,7 @@ UsersVoiceオブジェクトを作成し、セットする。
 <Method name="ShowVersion">
 <ClassMethod>1</ClassMethod>
 <ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit "1.0.009"
+<Implementation><![CDATA[	quit "1.0.010"
 ]]></Implementation>
 </Method>
 
@@ -5886,12 +5886,22 @@ if $Get(%session.Data("Access"))="" {
 	//set topic.RefFreq=topic.RefFreq+1
 	set uv=topic.UsersVoice
 	
-	set uv.RefFreq=uv.RefFreq+1
-	
-	set %session.Data("noAudit")=1
+	if $isObject(uv) {
+	    set uv.RefFreq=uv.RefFreq+1	
+	}
+	Else {
+		set uv = ##class(KB.UsersVoice).%New()
+		set topic.UsersVoice = uv
+	    set uv.RefFreq=uv.RefFreq+1
+	    set uv.TopicId = topic.%Id()	
+	    set %session.Data("noAudit")=1
+	    set st=topic.%Save()
+	    set %session.Data("noAudit")=0
+	}
+		
+    set %session.Data("noAudit")=1
 	set st=uv.%Save()
 	set %session.Data("noAudit")=0
-	
 	set %session.Data("RefFreqChk",DocNo)=%session.SessionId
 }
 
@@ -6130,6 +6140,19 @@ if $Get(%session.Data("EnqChk",DocNo)) '="" {
 set tp=##class(KB.Topic).%OpenId(DocNo)
 set uv=tp.UsersVoice
 
+if $isObject(uv) {
+	   set uv.RefFreq=uv.RefFreq+1	
+}
+else {
+	   set uv = ##class(KB.UsersVoice).%New()
+	   set tp.UsersVoice = uv
+	   set uv.RefFreq=uv.RefFreq+1
+	   set uv.TopicId = tp.%Id()	
+	   set %session.Data("noAudit")=1
+	   set st=tp.%Save()
+	   set %session.Data("noAudit")=0
+	}
+		
 If ans="Y" {
 	set uv.EnqYes=uv.EnqYes+1
 }elseif ans="N"{
